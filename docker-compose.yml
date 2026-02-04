@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: swa-postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: events_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d events_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - swa-network
+
+  command-service:
+    build:
+      context: ./command-service
+      dockerfile: Dockerfile
+    container_name: swa-command-service
+    environment:
+      PORT: 3002
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: events_db
+      DB_USER: admin
+      DB_PASSWORD: admin123
+    ports:
+      - "3002:3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - swa-network
+    restart: unless-stopped
+
+  query-service:
+    build:
+      context: ./query-service
+      dockerfile: Dockerfile
+    container_name: swa-query-service
+    environment:
+      PORT: 3001
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: events_db
+      DB_USER: admin
+      DB_PASSWORD: admin123
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - swa-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  swa-network:
+    driver: bridge
