@@ -1,0 +1,88 @@
+_format_version: "3.0"
+
+services:
+  - name: auth-service
+    url: http://auth-service:3003
+    routes:
+      - name: auth-login
+        paths:
+          - /auth/login
+        methods:
+          - POST
+          - OPTIONS
+        strip_path: false
+
+  - name: query-service
+    url: http://query-service:3001/events
+    routes:
+      - name: query-events
+        paths:
+          - /api/events
+        methods:
+          - GET
+        strip_path: true
+    plugins:
+      - name: jwt
+        config:
+          uri_param_names:
+            - jwt
+          claims_to_verify:
+            - exp
+
+  - name: command-service
+    url: http://command-service:3002/events
+    routes:
+      - name: command-events
+        paths:
+          - /api/events
+        methods:
+          - POST
+          - PUT
+          - DELETE
+          - PATCH
+          - OPTIONS
+        strip_path: true
+      - name: command-events-id
+        paths:
+          - ~/api/events/[^/]+$
+        methods:
+          - PUT
+          - DELETE
+          - PATCH
+          - OPTIONS
+        strip_path: true
+    plugins:
+      - name: jwt
+        config:
+          uri_param_names:
+            - jwt
+          claims_to_verify:
+            - exp
+
+consumers:
+  - username: default-user
+    jwt_secrets:
+      - key: default-key
+        secret: my-secret-key-change-in-production
+        algorithm: HS256
+
+plugins:
+  - name: cors
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        - OPTIONS
+      headers:
+        - Accept
+        - Authorization
+        - Content-Type
+      exposed_headers:
+        - Authorization
+      credentials: true
+      max_age: 3600
