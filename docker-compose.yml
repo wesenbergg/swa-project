@@ -129,13 +129,6 @@ services:
     networks:
       - swa-network
     restart: unless-stopped
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./ui/src
-          target: /usr/src/app/dist
-        - action: rebuild
-          path: ./ui/package.json
 
 volumes:
   postgres_data:

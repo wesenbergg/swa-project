@@ -4,7 +4,7 @@ interface Event {
   id: number;
   title: string;
   description: string;
-  event_date: string;
+  date: string;
   location: string;
 }
 
@@ -99,7 +99,7 @@ function App() {
     const eventData = {
       title: formData.get("title") as string,
       description: formData.get("description") as string,
-      event_date: formData.get("date") as string,
+      date: formData.get("date") as string,
       location: formData.get("location") as string,
     };
 
@@ -124,7 +124,6 @@ function App() {
         throw new Error("Failed to create event");
       }
 
-      e.currentTarget.reset();
       await fetchEvents();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create event");
@@ -220,7 +219,7 @@ function App() {
           <li key={event.id}>
             <h3>{event.title}</h3>
             <p>{event.description}</p>
-            <p>Date: {new Date(event.event_date).toLocaleDateString()}</p>
+            <p>Date: {new Date(event.date).toLocaleDateString()}</p>
             <p>Location: {event.location}</p>
           </li>
         ))}
