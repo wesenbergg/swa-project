@@ -21,13 +21,6 @@ services:
         methods:
           - GET
         strip_path: true
-    plugins:
-      - name: jwt
-        config:
-          uri_param_names:
-            - jwt
-          claims_to_verify:
-            - exp
 
   - name: command-service
     url: http://command-service:3002/events
@@ -86,3 +79,7 @@ plugins:
         - Authorization
       credentials: true
       max_age: 3600
+  - name: rate-limiting
+    config:
+      minute: 100
+      policy: local

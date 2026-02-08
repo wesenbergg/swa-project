@@ -31,6 +31,8 @@ services:
       KONG_ADMIN_ERROR_LOG: /dev/stderr
       KONG_ADMIN_LISTEN: "0.0.0.0:8001"
       KONG_PROXY_LISTEN: "0.0.0.0:8000"
+      KONG_DNS_RESOLVER: "127.0.0.11"
+      KONG_DNS_ORDER: "LAST,A,CNAME"
     ports:
       - "8000:8000"
       - "8001:8001"
