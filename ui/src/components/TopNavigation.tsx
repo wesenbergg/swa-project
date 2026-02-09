@@ -41,7 +41,7 @@ const TopNavigation = () => {
               key={category}
               onClick={() => setSelectedCategory(category)}
               className={`px-4 py-1 neo-border neo-shadow text-xs font-black uppercase whitespace-nowrap ${
-                selectedCategory === category ? "bg-[#FFDE00]" : "bg-white"
+                selectedCategory === category ? "bg-yellow-400" : "bg-white"
               }`}
             >
               {category}

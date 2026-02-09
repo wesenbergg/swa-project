@@ -76,93 +76,91 @@ function Home() {
   return (
     <div className="text-black antialiased pb-24">
       {/* Main Content */}
-      <main className="max-w-md mx-auto p-4 pt-8 space-y-10">
+      <main className="max-w-md md:max-w-4xl lg:max-w-7xl mx-auto p-4 pt-8">
         {isLoading && (
-          <div className="text-center py-8">
+          <div className="text-center py-8 col-span-full">
             <p className="font-black text-lg uppercase">Loading...</p>
           </div>
         )}
 
         {!isLoading && events.length === 0 && (
-          <div className="text-center py-8">
+          <div className="text-center py-8 col-span-full">
             <p className="font-black text-lg uppercase">No events found</p>
           </div>
         )}
 
-        {events.map(event => {
-          const { month, day } = formatDate(event.date)
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {events.map(event => {
+            const { month, day } = formatDate(event.date)
 
-          return (
-            <article
-              key={event.id}
-              className="bg-white neo-border neo-shadow-lg overflow-hidden flex flex-col"
-            >
-              {/* Event Image */}
-              <div className="relative h-48 border-b-4 border-black bg-gray-200">
-                <div className="absolute inset-0 bg-linear-to-br from-gray-300 to-gray-400 flex items-center justify-center">
-                  <Calendar
-                    className="w-16 h-16 text-gray-500"
-                    strokeWidth={2.5}
-                  />
-                </div>
-                <div className="absolute top-4 left-4 bg-[#FFDE00] neo-border p-2 min-w-12.5 text-center neo-shadow">
-                  <div className="text-[10px] font-black uppercase leading-none">
-                    {month}
+            return (
+              <article
+                key={event.id}
+                className="bg-white neo-border neo-shadow-lg overflow-hidden flex flex-col"
+              >
+                {/* Event Image */}
+                <div className="relative h-48 border-b-4 border-black bg-gray-200">
+                  <div className="absolute inset-0 bg-linear-to-br from-gray-300 to-gray-400 flex items-center justify-center">
+                    <Calendar
+                      className="w-16 h-16 text-gray-500"
+                      strokeWidth={2.5}
+                    />
                   </div>
-                  <div className="text-xl font-black leading-none">{day}</div>
-                </div>
-              </div>
-
-              {/* Event Details */}
-              <div className="p-5 space-y-4">
-                <div className="flex justify-between items-start gap-4">
-                  <h2 className="text-2xl font-black uppercase leading-none tracking-tight">
-                    {event.title}
-                  </h2>
-                  {event.paid && event.price ? (
-                    <span className="bg-[#FFDE00] neo-border px-2 py-1 font-black text-lg">
-                      {event.price}
-                    </span>
-                  ) : (
-                    <span className="bg-white neo-border px-2 py-1 font-black text-lg italic">
-                      FREE
-                    </span>
-                  )}
+                  <div className="absolute top-4 left-4 bg-yellow-400 neo-border p-2 min-w-12.5 text-center neo-shadow">
+                    <div className="text-xs font-black uppercase leading-none">
+                      {month}
+                    </div>
+                    <div className="text-xl font-black leading-none">{day}</div>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  {event.time && (
+                {/* Event Details */}
+                <div className="p-5 space-y-4">
+                  <div className="flex justify-between items-start gap-4">
+                    <h2 className="text-2xl font-black uppercase leading-none tracking-tight">
+                      {event.title}
+                    </h2>
+                    {event.paid && event.price ? (
+                      <span className="bg-yellow-400 neo-border px-2 py-1 font-black text-lg">
+                        {event.price}
+                      </span>
+                    ) : (
+                      <span className="bg-white neo-border px-2 py-1 font-black text-lg italic">
+                        FREE
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
                     <div className="flex items-center gap-3">
                       <Clock className="w-5 h-5" strokeWidth={3} />
                       <span className="font-bold text-sm">
-                        {formatTime(event.time)}
+                        {event.time ? formatTime(event.time) : "TBD"}
                       </span>
                     </div>
-                  )}
-                  {event.location && (
                     <div className="flex items-center gap-3">
                       <MapPin className="w-5 h-5" strokeWidth={3} />
                       <span className="font-bold text-sm uppercase">
-                        {event.location}
+                        {event.location ? event.location : "TBD"}
                       </span>
                     </div>
-                  )}
-                </div>
+                  </div>
 
-                <Link to={`/events/${event.id}`} className="block">
-                  <button className="w-full bg-[#FFDE00] py-4 neo-border neo-shadow neo-button-active font-black text-lg uppercase flex items-center justify-center gap-2 group">
-                    Join Event
-                    <Zap
-                      className="w-5 h-5"
-                      strokeWidth={3}
-                      fill="currentColor"
-                    />
-                  </button>
-                </Link>
-              </div>
-            </article>
-          )
-        })}
+                  <Link to={`/events/${event.id}`} className="block">
+                    <button className="w-full bg-yellow-400 py-4 neo-border neo-shadow neo-button-active font-black text-lg uppercase flex items-center justify-center gap-2 group">
+                      Join Event
+                      <Zap
+                        className="w-5 h-5"
+                        strokeWidth={3}
+                        fill="currentColor"
+                      />
+                    </button>
+                  </Link>
+                </div>
+              </article>
+            )
+          })}
+        </div>
       </main>
     </div>
   )
