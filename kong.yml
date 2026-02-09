@@ -21,6 +21,14 @@ services:
         methods:
           - GET
         strip_path: true
+    plugins:
+      - name: proxy-cache
+        config:
+          strategy: memory
+          content_type:
+            - application/json
+          cache_ttl: 300
+          cache_control: false
 
   - name: command-service
     url: http://command-service:3002/events
@@ -83,3 +91,8 @@ plugins:
     config:
       minute: 100
       policy: local
+  - name: request-size-limiting
+    config:
+      allowed_payload_size: 1
+      size_unit: megabytes
+      require_content_length: false
