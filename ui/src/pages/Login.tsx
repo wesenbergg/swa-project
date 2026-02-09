@@ -1,43 +1,43 @@
-import { useState } from "react";
+import { useState } from "react"
 
-const AUTH_URL = "http://localhost:8000";
+const AUTH_URL = "http://localhost:8000"
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
   const [token, setToken] = useState<string | null>(
     localStorage.getItem("token"),
-  );
+  )
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const login = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setIsLoading(true);
+    e.preventDefault()
+    setError(null)
+    setIsLoading(true)
 
     try {
       const response = await fetch(`${AUTH_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error("Login failed");
+        throw new Error("Login failed")
       }
 
-      const data = await response.json();
-      setToken(data.token);
-      localStorage.setItem("token", data.token);
-      setPassword("");
+      const data = await response.json()
+      setToken(data.token)
+      localStorage.setItem("token", data.token)
+      setPassword("")
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(err instanceof Error ? err.message : "Login failed")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   if (!token) {
     return (
@@ -50,7 +50,7 @@ const Login = () => {
               type="text"
               id="username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={e => setUsername(e.target.value)}
               required
             />
           </div>
@@ -60,7 +60,7 @@ const Login = () => {
               type="password"
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               required
             />
           </div>
@@ -73,9 +73,9 @@ const Login = () => {
           </p>
         </form>
       </main>
-    );
+    )
   }
-  return null;
-};
+  return null
+}
 
-export default Login;
+export default Login
