@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react"
-import { useParams, Link } from "react-router"
+import { useParams, useNavigate } from "react-router"
+import { Bookmark, Utensils, Mic, Users } from "lucide-react"
 
 interface Event {
   id: number
@@ -34,6 +35,7 @@ const API_BASE_URL = "http://localhost:8000"
 
 function Single() {
   const { event: id } = useParams<{ event: string }>()
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [events, setEvents] = useState<Event[]>([])
@@ -41,6 +43,18 @@ function Single() {
   const event = useMemo(() => {
     return events.find(e => String(e.id) === id)
   }, [events, id])
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const month = date.toLocaleDateString("en-US", { month: "short" })
+    const day = date.getDate()
+    return `${month} ${day}`
+  }
+
+  const formatTime = (timeString?: string) => {
+    if (!timeString) return "TBD"
+    return timeString
+  }
 
   const fetchEvents = async () => {
     setIsLoading(true)
@@ -69,169 +83,185 @@ function Single() {
 
   if (isLoading) {
     return (
-      <main>
-        <p>Loading...</p>
-      </main>
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="font-black text-lg uppercase">Loading...</p>
+      </div>
     )
   }
 
   if (error || !event) {
     return (
-      <main>
-        <p style={{ color: "red" }}>{error || "Event not found"}</p>
-        <Link to="/">← Back to Events</Link>
-      </main>
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <p className="font-black text-lg uppercase mb-4 text-red-600">
+          {error || "Event not found"}
+        </p>
+        <button
+          onClick={() => navigate("/")}
+          className="bg-yellow-400 px-6 py-3 neo-border neo-shadow neo-button-active font-black uppercase"
+        >
+          ← Back to Events
+        </button>
+      </div>
     )
   }
 
   return (
-    <main>
-      <Link to="/">← Back to Events</Link>
+    <div className="relative flex min-h-screen flex-col overflow-x-hidden">
+      <main className="flex-1 pb-40">
+        {/* Event Image */}
+        <div className="p-4">
+          <div className="neo-border-thick bg-white neo-shadow-lg overflow-hidden relative">
+            <div className="w-full aspect-4/3 bg-linear-to-br from-gray-300 to-gray-400 border-b-4 border-black flex items-center justify-center">
+              <Bookmark className="w-24 h-24 text-gray-500" strokeWidth={2} />
+            </div>
+            <div className="absolute top-4 left-4">
+              <span className="bg-yellow-400 neo-border px-3 py-1 font-black text-xs uppercase neo-shadow">
+                Top Rated
+              </span>
+            </div>
+          </div>
+        </div>
 
-      <h1>{event.title}</h1>
+        {/* Tags */}
+        <div className="px-4 pt-2">
+          <div className="flex flex-wrap gap-2 mb-4">
+            {event.category && (
+              <span className="bg-black text-white px-3 py-1 text-xs font-black uppercase tracking-widest">
+                {event.category}
+              </span>
+            )}
+            {event.alcohol_meter === 0 && (
+              <span className="bg-white neo-border px-3 py-1 text-xs font-bold uppercase tracking-widest">
+                Alcohol-free
+              </span>
+            )}
+            <span className="bg-white neo-border px-3 py-1 text-xs font-bold uppercase tracking-widest">
+              In-person
+            </span>
+          </div>
 
-      {event.fixed_event_type && (
-        <p>
-          <strong>Event Type:</strong> {event.fixed_event_type}
-        </p>
-      )}
+          {/* Title */}
+          <h1 className="font-black text-5xl leading-[0.95] mb-6 tracking-tighter uppercase italic">
+            {event.title}
+          </h1>
+        </div>
 
-      {event.category && (
-        <p>
-          <strong>Category:</strong> {event.category}
-        </p>
-      )}
+        {/* Date/Time/Location Grid */}
+        <div className="grid grid-cols-3 mx-4 neo-border-thick bg-black overflow-hidden mb-8 neo-shadow-lg">
+          <div className="flex flex-col items-center justify-center p-4 bg-white border-r-4 border-black">
+            <span className="font-black text-2xl italic">
+              {formatDate(event.date)}
+            </span>
+            <span className="text-[9px] font-black uppercase tracking-widest text-center">
+              Date
+            </span>
+          </div>
+          <div className="flex flex-col items-center justify-center p-4 bg-white border-r-4 border-black">
+            <span className="font-black text-2xl italic">
+              {formatTime(event.time)}
+            </span>
+            <span className="text-[9px] font-black uppercase tracking-widest text-center">
+              Time
+            </span>
+          </div>
+          <div className="flex flex-col items-center justify-center p-4 bg-white">
+            <span className="font-black text-xl italic truncate w-full text-center">
+              {event.location || event.fixed_location || "TBD"}
+            </span>
+            <span className="text-[9px] font-black uppercase tracking-widest text-center">
+              Location
+            </span>
+          </div>
+        </div>
 
-      <h2>Description</h2>
-      <p>{event.description || "No description provided"}</p>
+        {/* Description */}
+        <div className="px-4 mb-10">
+          <p className="text-lg leading-tight font-bold mb-4 border-l-8 border-yellow-400 pl-4 py-1">
+            {event.description || "No description provided for this event."}
+          </p>
 
-      <h2>Date & Time</h2>
-      <p>
-        <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}
-      </p>
-      {event.time && (
-        <p>
-          <strong>Time:</strong> {event.time}
-        </p>
-      )}
-
-      <h2>Location</h2>
-      {event.location && (
-        <p>
-          <strong>Location:</strong> {event.location}
-        </p>
-      )}
-      {event.fixed_location && (
-        <p>
-          <strong>Venue:</strong> {event.fixed_location}
-        </p>
-      )}
-      {event.map && (
-        <p>
-          <a href={event.map} target="_blank" rel="noopener noreferrer">
-            View on Map →
-          </a>
-        </p>
-      )}
-
-      {(event.organizer || event.organizer_url || event.responsible) && (
-        <>
-          <h2>Organizer Information</h2>
           {event.organizer && (
-            <p>
-              <strong>Organizer:</strong> {event.organizer}
+            <p className="text-sm font-medium text-black/70">
+              Organized by {event.organizer}
+              {event.membership_required && " • Membership required"}
+              {event.avec && " • Plus-ones welcome"}
             </p>
           )}
-          {event.organizer_url && (
-            <p>
-              <a
-                href={event.organizer_url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Organizer Website →
-              </a>
-            </p>
-          )}
-          {event.show_responsible && event.responsible && (
-            <p>
-              <strong>Responsible Person:</strong> {event.responsible}
-            </p>
-          )}
-        </>
-      )}
+        </div>
 
-      <h2>Payment</h2>
-      <p>
-        <strong>Paid Event:</strong> {event.paid ? "Yes" : "No"}
-      </p>
-      {event.paid && event.price && (
-        <p>
-          <strong>Price:</strong> {event.price}
-        </p>
-      )}
+        {/* What to Expect */}
+        <div className="px-4">
+          <h3 className="font-black text-2xl uppercase italic mb-6 underline decoration-yellow-400 decoration-8 underline-offset-1">
+            What to Expect
+          </h3>
+          <div className="space-y-4">
+            <div className="neo-border-thick bg-white p-4 neo-shadow flex gap-4 items-center">
+              <div className="bg-yellow-400 neo-border size-10 shrink-0 flex items-center justify-center shadow-[2px_2px_0px_0px_#000000]">
+                <Utensils className="w-5 h-5" strokeWidth={3} />
+              </div>
+              <div>
+                <p className="font-black text-base uppercase leading-tight">
+                  Free Food & Drinks
+                </p>
+                <p className="text-[11px] font-bold uppercase opacity-60">
+                  Catered appetizers & beverages
+                </p>
+              </div>
+            </div>
 
-      <h2>Event Details</h2>
-      <p>
-        <strong>Alcohol Level:</strong> {event.alcohol_meter}/5
-      </p>
+            <div className="neo-border-thick bg-white p-4 neo-shadow flex gap-4 items-center">
+              <div className="bg-yellow-400 neo-border size-10 shrink-0 flex items-center justify-center shadow-[2px_2px_0px_0px_#000000]">
+                <Mic className="w-5 h-5" strokeWidth={3} />
+              </div>
+              <div>
+                <p className="font-black text-base uppercase leading-tight">
+                  Keynote Speech
+                </p>
+                <p className="text-[11px] font-bold uppercase opacity-60">
+                  By industry leaders
+                </p>
+              </div>
+            </div>
 
-      <h2>Participation</h2>
-      <p>
-        <strong>Can Participate:</strong> {event.can_participate ? "Yes" : "No"}
-      </p>
-      <p>
-        <strong>Membership Required:</strong>{" "}
-        {event.membership_required ? "Yes" : "No"}
-      </p>
-      <p>
-        <strong>Avec Allowed:</strong> {event.avec ? "Yes" : "No"}
-      </p>
-      {event.max_participants && (
-        <p>
-          <strong>Maximum Participants:</strong> {event.max_participants}
-        </p>
-      )}
+            <div className="neo-border-thick bg-white p-4 neo-shadow flex gap-4 items-center">
+              <div className="bg-yellow-400 neo-border size-10 shrink-0 flex items-center justify-center shadow-[2px_2px_0px_0px_#000000]">
+                <Users className="w-5 h-5" strokeWidth={3} />
+              </div>
+              <div>
+                <p className="font-black text-base uppercase leading-tight">
+                  Networking
+                </p>
+                <p className="text-[11px] font-bold uppercase opacity-60">
+                  Meet fellow students & professionals
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      {(event.registration_starts ||
-        event.registration_ends ||
-        event.cancellation_starts ||
-        event.cancellation_ends) && (
-        <>
-          <h2>Registration & Cancellation</h2>
-          {event.registration_starts && (
-            <p>
-              <strong>Registration Opens:</strong>{" "}
-              {new Date(event.registration_starts).toLocaleString()}
-            </p>
-          )}
-          {event.registration_ends && (
-            <p>
-              <strong>Registration Closes:</strong>{" "}
-              {new Date(event.registration_ends).toLocaleString()}
-            </p>
-          )}
-          {event.cancellation_starts && (
-            <p>
-              <strong>Cancellation Opens:</strong>{" "}
-              {new Date(event.cancellation_starts).toLocaleString()}
-            </p>
-          )}
-          {event.cancellation_ends && (
-            <p>
-              <strong>Cancellation Closes:</strong>{" "}
-              {new Date(event.cancellation_ends).toLocaleString()}
-            </p>
-          )}
-        </>
-      )}
-
-      {event.template && (
-        <p>
-          <em>This event is saved as a template</em>
-        </p>
-      )}
-    </main>
+        {/* Participation Info */}
+        {event.max_participants && (
+          <div className="mx-4 mt-12 p-4 neo-border-thick bg-yellow-400/10 flex items-center gap-4">
+            <div className="flex -space-x-3">
+              <div className="h-12 w-12 rounded-full neo-border-thick bg-gray-300 flex items-center justify-center">
+                <Users className="w-6 h-6" strokeWidth={2} />
+              </div>
+            </div>
+            <div>
+              <p className="text-sm font-black uppercase leading-none">
+                Joined by{" "}
+                <span className="bg-yellow-400 px-1 border border-black">
+                  {Math.floor(event.max_participants * 0.7)}+ students
+                </span>
+              </p>
+              <p className="text-xs font-bold uppercase opacity-60 mt-1">
+                Limited spots remaining
+              </p>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
   )
 }
 

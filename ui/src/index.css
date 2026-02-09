@@ -28,6 +28,10 @@ body {
   border: 3px solid var(--neo-black);
 }
 
+.neo-border-thick {
+  border: 4px solid var(--neo-black);
+}
+
 .neo-shadow {
   box-shadow: 4px 4px 0px 0px var(--neo-black);
 }
