@@ -41,10 +41,6 @@ function Single() {
   const event = useMemo(() => {
     return events.find(e => String(e.id) === id)
   }, [events, id])
-  console.log(
-    events.map(e => e.id),
-    id,
-  )
 
   const fetchEvents = async () => {
     setIsLoading(true)
