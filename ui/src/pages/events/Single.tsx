@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router"
 import { Bookmark, Utensils, Mic, Users } from "lucide-react"
 
 interface Event {
-  id: number
+  id: string
   title: string
   description?: string
   date: string
