@@ -1,9 +1,9 @@
 import { useState, type SubmitEvent } from "react"
 import { GraduationCap, ArrowRight } from "lucide-react"
-
-const AUTH_URL = "http://localhost:8000"
+import { Link, useNavigate } from "react-router"
 
 const Login = () => {
+  const navigate = useNavigate()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
@@ -16,11 +16,14 @@ const Login = () => {
     setIsLoading(true)
 
     try {
-      const response = await fetch(`${AUTH_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      })
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        },
+      )
 
       if (!response.ok) {
         throw new Error("Login failed")
@@ -29,6 +32,7 @@ const Login = () => {
       const data = await response.json()
       localStorage.setItem("token", data.token)
       setPassword("")
+      navigate("/")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed")
     } finally {
@@ -37,7 +41,7 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center px-6 py-12 relative overflow-hidden bg-gray-50">
+    <div className="min-h-screen flex flex-col justify-center px-6 py-12 relative overflow-hidden bg-gray-50/0">
       {/* Decorative elements */}
       <div className="fixed -bottom-12 -right-12 w-48 h-48 bg-yellow-400 rounded-full neo-border -z-10 opacity-50"></div>
       <div className="fixed top-20 -left-10 w-24 h-24 bg-white neo-border rotate-12 -z-10"></div>
@@ -88,12 +92,12 @@ const Login = () => {
               >
                 Password
               </label>
-              <a
-                href="#"
+              <Link
+                to="#"
                 className="text-xs font-black uppercase underline decoration-2 underline-offset-2"
               >
                 Forgot?
-              </a>
+              </Link>
             </div>
             <input
               type="password"
@@ -115,14 +119,6 @@ const Login = () => {
             </div>
           )}
 
-          {/* Development Hint */}
-          <div className="bg-blue-50 neo-border p-3">
-            <p className="text-blue-600 font-bold text-xs">
-              Dev: Use password{" "}
-              <code className="bg-blue-100 px-1">admin123</code>
-            </p>
-          </div>
-
           {/* Submit Button */}
           <div className="pt-4">
             <button
@@ -136,36 +132,16 @@ const Login = () => {
           </div>
         </form>
 
-        {/* Social Login */}
-        <div className="mt-10 space-y-4">
-          <div className="relative flex items-center">
-            <div className="grow border-t-2 border-black"></div>
-            <span className="shrink mx-4 text-xs font-black uppercase bg-gray-50">
-              Or continue as
-            </span>
-            <div className="grow border-t-2 border-black"></div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4">
-            <button
-              type="button"
-              className="w-full bg-white h-14 neo-border neo-shadow neo-button-active font-black text-sm uppercase flex items-center justify-center gap-3"
-            >
-              Guest
-            </button>
-          </div>
-        </div>
-
         {/* Sign Up Link */}
         <div className="mt-12 text-center">
           <p className="font-bold text-sm">
             Don't have an account?
-            <a
-              href="/register"
+            <Link
+              to="/register"
               className="bg-yellow-400 px-2 py-1 neo-border font-black uppercase text-xs ml-2 hover:neo-shadow transition-all inline-block"
             >
               Sign Up
-            </a>
+            </Link>
           </p>
         </div>
       </main>

@@ -31,8 +31,6 @@ interface Event {
   template: boolean
 }
 
-const API_BASE_URL = "http://localhost:8000"
-
 function Single() {
   const { event: id } = useParams<{ event: string }>()
   const navigate = useNavigate()
@@ -60,7 +58,9 @@ function Single() {
     setIsLoading(true)
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/events`)
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/events`,
+      )
 
       if (!response.ok) {
         throw new Error("Failed to fetch events")

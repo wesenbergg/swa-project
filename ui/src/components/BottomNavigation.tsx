@@ -13,24 +13,24 @@ const BottomNavigation = () => {
             </div>
             <span className="text-xs font-black uppercase">Home</span>
           </Link>
-          <a href="#" className="flex flex-col items-center gap-1 group">
+          <Link to="#" className="flex flex-col items-center gap-1 group">
             <div className="w-12 h-10 bg-white neo-border neo-shadow flex items-center justify-center">
               <Compass className="w-5 h-5" strokeWidth={3} />
             </div>
             <span className="text-xs font-black uppercase">Discover</span>
-          </a>
-          <a href="#" className="flex flex-col items-center gap-1 group">
+          </Link>
+          <Link to="#" className="flex flex-col items-center gap-1 group">
             <div className="w-12 h-10 bg-white neo-border neo-shadow flex items-center justify-center">
               <Ticket className="w-5 h-5" strokeWidth={3} />
             </div>
             <span className="text-xs font-black uppercase">Tickets</span>
-          </a>
-          <a href="#" className="flex flex-col items-center gap-1 group">
+          </Link>
+          <Link to="#" className="flex flex-col items-center gap-1 group">
             <div className="w-12 h-10 bg-white neo-border neo-shadow flex items-center justify-center">
               <User className="w-5 h-5" strokeWidth={3} />
             </div>
             <span className="text-xs font-black uppercase">Profile</span>
-          </a>
+          </Link>
         </div>
       </nav>
     </>

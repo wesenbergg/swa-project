@@ -31,8 +31,6 @@ interface Event {
   template: boolean
 }
 
-const API_BASE_URL = "http://localhost:8000"
-
 function Home() {
   const [isLoading, setIsLoading] = useState(false)
   const [events, setEvents] = useState<Event[]>([])
@@ -41,7 +39,9 @@ function Home() {
     setIsLoading(true)
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/events`)
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/events`,
+      )
 
       if (!response.ok) {
         throw new Error("Failed to fetch events")
@@ -148,7 +148,7 @@ function Home() {
 
                   <Link
                     to={`/events/${event.id}`}
-                    className="block w-full bg-yellow-400 py-4 neo-border neo-shadow neo-button-active font-black text-lg uppercase flex items-center justify-center gap-2 group"
+                    className="w-full bg-yellow-400 py-4 neo-border neo-shadow neo-button-active font-black text-lg uppercase flex items-center justify-center gap-2 group"
                   >
                     Join Event
                     <Zap

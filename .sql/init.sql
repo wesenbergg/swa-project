@@ -1,3 +1,6 @@
+-- Enable UUID generation extension
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- Create events table
 CREATE TABLE IF NOT EXISTS events (
     id UUID PRIMARY KEY,
@@ -26,7 +29,6 @@ CREATE TABLE IF NOT EXISTS events (
     cancellation_starts TIMESTAMP,
     cancellation_ends TIMESTAMP,
     template BOOLEAN DEFAULT false,
-    custom_fields JSONB,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
