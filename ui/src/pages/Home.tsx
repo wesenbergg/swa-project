@@ -3,7 +3,7 @@ import { Link } from "react-router"
 import { Calendar, Clock, MapPin, Zap } from "lucide-react"
 
 interface Event {
-  id: number
+  id: string
   title: string
   description?: string
   date: string
@@ -146,15 +146,16 @@ function Home() {
                     </div>
                   </div>
 
-                  <Link to={`/events/${event.id}`} className="block">
-                    <button className="w-full bg-yellow-400 py-4 neo-border neo-shadow neo-button-active font-black text-lg uppercase flex items-center justify-center gap-2 group">
-                      Join Event
-                      <Zap
-                        className="w-5 h-5"
-                        strokeWidth={3}
-                        fill="currentColor"
-                      />
-                    </button>
+                  <Link
+                    to={`/events/${event.id}`}
+                    className="block w-full bg-yellow-400 py-4 neo-border neo-shadow neo-button-active font-black text-lg uppercase flex items-center justify-center gap-2 group"
+                  >
+                    Join Event
+                    <Zap
+                      className="w-5 h-5"
+                      strokeWidth={3}
+                      fill="currentColor"
+                    />
                   </Link>
                 </div>
               </article>

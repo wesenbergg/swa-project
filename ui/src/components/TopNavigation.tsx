@@ -1,14 +1,16 @@
 import { useState } from "react"
 import { Search, LogOut } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 const categories = ["All Events", "Social", "Academic", "Workshops"]
 
 const TopNavigation = () => {
   const [selectedCategory, setSelectedCategory] = useState("All Events")
+  const navigate = useNavigate()
 
   const logout = () => {
     localStorage.removeItem("token")
-    window.location.href = "/login"
+    navigate("/login")
   }
   return (
     <>

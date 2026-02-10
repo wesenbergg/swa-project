@@ -11,7 +11,11 @@ const New = () => {
 
   const createEvent = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!token) return
+    if (!token) {
+      setError("You must be logged in to create an event.")
+      redirect("/login")
+      return
+    }
 
     const formData = new FormData(e.currentTarget)
     const eventData = {

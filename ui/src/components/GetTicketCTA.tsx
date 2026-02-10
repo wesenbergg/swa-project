@@ -1,6 +1,11 @@
 import { Ticket } from "lucide-react"
 
-const GetTicketCTA = ({ event }: { event: any }) => {
+type TicketEvent = {
+  paid?: boolean
+  price?: number | string
+}
+
+const GetTicketCTA = ({ event }: { event: TicketEvent }) => {
   return (
     <>
       {/* Fixed Bottom CTA */}
@@ -12,7 +17,7 @@ const GetTicketCTA = ({ event }: { event: any }) => {
             </span>
             <div className="flex items-baseline gap-1">
               <span className="text-3xl font-black italic">
-                ${event.paid && event.price ? event.price : "0"}
+                {event.paid && event.price ? event.price : "0"}
               </span>
               {!event.paid && (
                 <span className="text-sm font-black uppercase bg-yellow-400 px-1 border border-black">
