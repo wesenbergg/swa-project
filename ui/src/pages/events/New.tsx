@@ -1,9 +1,8 @@
 import { useState, type SubmitEvent } from "react"
-import { redirect } from "react-router"
-
-const API_BASE_URL = "http://localhost:8000"
+import { useNavigate } from "react-router"
 
 const New = () => {
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -13,27 +12,34 @@ const New = () => {
     e.preventDefault()
     if (!token) {
       setError("You must be logged in to create an event.")
-      redirect("/login")
+      navigate("/login")
       return
     }
 
     const formData = new FormData(e.currentTarget)
+
+    // Helper to normalize empty strings to undefined
+    const getStringOrUndefined = (key: string): string | undefined => {
+      const value = formData.get(key) as string
+      return value?.trim() ? value : undefined
+    }
+
     const eventData = {
       title: formData.get("title") as string,
-      description: formData.get("description") as string,
+      description: getStringOrUndefined("description"),
       date: formData.get("date") as string,
-      time: formData.get("time") as string,
-      location: formData.get("location") as string,
-      fixed_location: formData.get("fixed_location") as string,
-      fixed_event_type: formData.get("fixed_event_type") as string,
-      category: formData.get("category") as string,
-      organizer: formData.get("organizer") as string,
-      organizer_url: formData.get("organizer_url") as string,
-      responsible: formData.get("responsible") as string,
+      time: getStringOrUndefined("time"),
+      location: getStringOrUndefined("location"),
+      fixed_location: getStringOrUndefined("fixed_location"),
+      fixed_event_type: getStringOrUndefined("fixed_event_type"),
+      category: getStringOrUndefined("category"),
+      organizer: getStringOrUndefined("organizer"),
+      organizer_url: getStringOrUndefined("organizer_url"),
+      responsible: getStringOrUndefined("responsible"),
       show_responsible: formData.get("show_responsible") === "on",
       paid: formData.get("paid") === "on",
-      price: formData.get("price") as string,
-      map: formData.get("map") as string,
+      price: getStringOrUndefined("price"),
+      map: getStringOrUndefined("map"),
       alcohol_meter: formData.get("alcohol_meter")
         ? parseInt(formData.get("alcohol_meter") as string)
         : 0,
@@ -43,10 +49,10 @@ const New = () => {
       max_participants: formData.get("max_participants")
         ? parseInt(formData.get("max_participants") as string)
         : undefined,
-      registration_starts: formData.get("registration_starts") as string,
-      registration_ends: formData.get("registration_ends") as string,
-      cancellation_starts: formData.get("cancellation_starts") as string,
-      cancellation_ends: formData.get("cancellation_ends") as string,
+      registration_starts: getStringOrUndefined("registration_starts"),
+      registration_ends: getStringOrUndefined("registration_ends"),
+      cancellation_starts: getStringOrUndefined("cancellation_starts"),
+      cancellation_ends: getStringOrUndefined("cancellation_ends"),
       template: formData.get("template") === "on",
     }
 
@@ -54,14 +60,17 @@ const New = () => {
     setError(null)
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/events`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/events`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(eventData),
         },
-        body: JSON.stringify(eventData),
-      })
+      )
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -69,7 +78,7 @@ const New = () => {
         }
         throw new Error("Failed to create event")
       }
-      redirect("/")
+      navigate("/")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create event")
     } finally {

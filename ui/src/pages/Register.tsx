@@ -1,9 +1,9 @@
 import { useState, type SubmitEvent } from "react"
 import { ArrowRight } from "lucide-react"
-
-const AUTH_URL = "http://localhost:8000"
+import { Link, useNavigate } from "react-router"
 
 const Register = () => {
+  const navigate = useNavigate()
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -17,11 +17,14 @@ const Register = () => {
     setIsLoading(true)
 
     try {
-      const response = await fetch(`${AUTH_URL}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName, email, password }),
-      })
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fullName, email, password }),
+        },
+      )
 
       if (!response.ok) {
         throw new Error("Registration failed")
@@ -30,6 +33,7 @@ const Register = () => {
       const data = await response.json()
       localStorage.setItem("token", data.token)
       setPassword("")
+      navigate("/")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed")
     } finally {
@@ -140,25 +144,25 @@ const Register = () => {
           <div className="grow border-t-2 border-black"></div>
         </div>
 
-        {/* Social Login Button */}
+        {/* Guest Login Button */}
         <div className="grid grid-cols-1 gap-4">
-          <button
-            type="button"
+          <Link
+            to="/"
             className="w-full bg-white h-14 neo-border neo-shadow neo-button-active font-black text-sm uppercase flex items-center justify-center gap-3"
           >
             Guest
-          </button>
+          </Link>
         </div>
 
         {/* Login Link */}
         <p className="text-center font-bold text-sm">
           Already have an account?{" "}
-          <a
-            href="/login"
+          <Link
+            to="/login"
             className="underline decoration-yellow-400 decoration-4 underline-offset-2"
           >
             Log In
-          </a>
+          </Link>
         </p>
       </div>
     </div>

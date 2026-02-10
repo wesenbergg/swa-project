@@ -5,7 +5,7 @@ INSERT INTO events (
     category, organizer, organizer_url, responsible, show_responsible, paid, price,
     map, alcohol_meter, can_participate, membership_required, avec, max_participants,
     registration_starts, registration_ends, cancellation_starts, cancellation_ends,
-    template, custom_fields
+    template
 ) VALUES
 (
     gen_random_uuid(),
@@ -33,8 +33,7 @@ INSERT INTO events (
     '1999-11-11 12:00:00',
     '1999-11-01 20:00:00',
     '1999-11-11 12:00:00',
-    false,
-    '[{"type": "checkbox", "id": "779", "name": "Oletko allerginen pähkinöille", "options": "Kyllä/ei"}]'::jsonb
+    false
 ),
 (
     gen_random_uuid(),
@@ -62,8 +61,7 @@ INSERT INTO events (
     '2026-04-28 23:59:59',
     '2026-04-15 00:00:00',
     '2026-04-29 23:59:59',
-    false,
-    '[{"type": "text", "name": "Ruoka-aineallergiat"}, {"type": "checkbox", "name": "Tulen avec-henkilön kanssa", "options": "Kyllä"}]'::jsonb
+    false
 ),
 (
     gen_random_uuid(),
@@ -91,8 +89,7 @@ INSERT INTO events (
     '2026-06-10 23:59:59',
     '2026-05-15 00:00:00',
     '2026-06-12 23:59:59',
-    false,
-    '[{"type": "checkbox", "name": "Tarvitsen kyydin", "options": "Kyllä/Ei"}, {"type": "text", "name": "Erityisruokavalio"}]'::jsonb
+    false
 ),
 (
     gen_random_uuid(),
@@ -120,8 +117,7 @@ INSERT INTO events (
     NULL,
     NULL,
     NULL,
-    true,
-    NULL
+    true
 ),
 (
     gen_random_uuid(),
@@ -149,6 +145,5 @@ INSERT INTO events (
     '2026-09-15 23:59:59',
     '2026-09-01 00:00:00',
     '2026-09-18 23:59:59',
-    false,
-    NULL
+    false
 );
