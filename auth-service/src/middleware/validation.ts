@@ -8,7 +8,7 @@ export function validateRegistration(
   res: Response,
   next: NextFunction,
 ) {
-  const { username, email, password } = req.body;
+  const { username, password } = req.body;
 
   // Validate username
   if (!username || typeof username !== "string") {
@@ -20,20 +20,9 @@ export function validateRegistration(
       .json({ error: "Username must be between 3 and 30 characters" });
   }
   if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-    return res
-      .status(400)
-      .json({
-        error: "Username can only contain letters, numbers, and underscores",
-      });
-  }
-
-  // Validate email
-  if (!email || typeof email !== "string") {
-    return res.status(400).json({ error: "Email is required" });
-  }
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({ error: "Invalid email format" });
+    return res.status(400).json({
+      error: "Username can only contain letters, numbers, and underscores",
+    });
   }
 
   // Validate password

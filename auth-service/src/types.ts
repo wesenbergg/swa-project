@@ -2,7 +2,6 @@
 export interface User {
   id: string;
   username: string;
-  email: string;
   password_hash: string;
   role: string;
   is_active: boolean;
@@ -13,7 +12,6 @@ export interface User {
 // DTO for user registration
 export interface CreateUserDto {
   username: string;
-  email: string;
   password: string;
 }
 
@@ -31,7 +29,6 @@ export interface TokenResponse {
   user: {
     id: string;
     username: string;
-    email: string;
     role: string;
   };
 }
@@ -55,7 +52,6 @@ export interface RefreshToken {
 export interface UserPublic {
   id: string;
   username: string;
-  email: string;
   role: string;
   created_at: Date;
 }

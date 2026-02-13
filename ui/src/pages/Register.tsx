@@ -4,8 +4,7 @@ import { Link, useNavigate } from "react-router"
 
 const Register = () => {
   const navigate = useNavigate()
-  const [fullName, setFullName] = useState("")
-  const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
   const [isLoading, setIsLoading] = useState(false)
@@ -22,7 +21,7 @@ const Register = () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fullName, email, password }),
+          body: JSON.stringify({ username, password }),
         },
       )
 
@@ -57,39 +56,20 @@ const Register = () => {
         {/* Registration Form */}
         <form className="space-y-6" onSubmit={register}>
           <div className="space-y-5">
-            {/* Full Name Field */}
+            {/* Username Field */}
             <div className="space-y-2">
               <label
-                htmlFor="fullName"
+                htmlFor="username"
                 className="block text-xs font-black uppercase tracking-wider ml-1"
               >
-                Full Name
+                Username
               </label>
               <input
                 type="text"
-                id="fullName"
-                value={fullName}
-                onChange={e => setFullName(e.target.value)}
-                placeholder="Alex Student"
-                className="w-full h-14 px-4 bg-white neo-border neo-shadow focus:ring-0 focus:outline-none font-bold text-lg placeholder:text-gray-300"
-                required
-              />
-            </div>
-
-            {/* Student Email Field */}
-            <div className="space-y-2">
-              <label
-                htmlFor="email"
-                className="block text-xs font-black uppercase tracking-wider ml-1"
-              >
-                Student Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="alex@university.edu"
+                id="username"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                placeholder="AlexStudent"
                 className="w-full h-14 px-4 bg-white neo-border neo-shadow focus:ring-0 focus:outline-none font-bold text-lg placeholder:text-gray-300"
                 required
               />

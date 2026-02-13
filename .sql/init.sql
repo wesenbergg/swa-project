@@ -40,7 +40,6 @@ CREATE INDEX idx_events_date ON events(date);
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     username VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL DEFAULT 'user',
     is_active BOOLEAN NOT NULL DEFAULT true,
@@ -50,7 +49,6 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Create indexes for faster user lookups
 CREATE INDEX idx_users_username ON users(username);
-CREATE INDEX idx_users_email ON users(email);
 
 -- Create refresh_tokens table for token management
 CREATE TABLE IF NOT EXISTS refresh_tokens (

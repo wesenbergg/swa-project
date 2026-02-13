@@ -11,6 +11,13 @@ services:
           - POST
           - OPTIONS
         strip_path: false
+      - name: auth-register
+        paths:
+          - /auth/register
+        methods:
+          - POST
+          - OPTIONS
+        strip_path: false
 
   - name: query-service
     url: http://query-service:3001/events
