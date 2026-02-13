@@ -56,6 +56,14 @@ services:
     environment:
       PORT: 3003
       JWT_SECRET: my-secret-key-change-in-production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: events_db
+      DB_USER: admin
+      DB_PASSWORD: admin123
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - swa-network
     restart: unless-stopped

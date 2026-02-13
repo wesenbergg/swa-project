@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Search, LogOut } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router"
 
 const categories = ["All Events", "Social", "Academic", "Workshops"]
 
