@@ -1,19 +1,79 @@
 services:
-  postgres:
+  # Main PostgreSQL Database (Write-Heavy for Command Service)
+  postgres-main:
     image: postgres:16-alpine
-    container_name: swa-postgres
+    container_name: swa-postgres-main
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin123
       POSTGRES_DB: events_db
+      POSTGRES_REPLICATION_USER: replicator
+      POSTGRES_REPLICATION_PASSWORD: replica123
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./.sql/init.sql:/docker-entrypoint-initdb.d/01-init.sql
-      - ./.sql/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+      - postgres_main_data:/var/lib/postgresql/data
+      - ./.sql/init-main.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ./.sql/seed-main.sql:/docker-entrypoint-initdb.d/02-seed.sql
+      - ./.postgres/main/create-replication-user.sh:/docker-entrypoint-initdb.d/03-replication-user.sh
+      - ./.postgres/main/create-replication-slot.sh:/docker-entrypoint-initdb.d/04-replication-slot.sh
+      - ./.postgres/main/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./.postgres/main/pg_hba.conf:/etc/postgresql/pg_hba.conf
+    command: |
+      postgres
+      -c config_file=/etc/postgresql/postgresql.conf 
+      -c hba_file=/etc/postgresql/pg_hba.conf
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin -d events_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - swa-network
+
+  # PostgreSQL Read Replica (Read-Only for Query Service)
+  postgres-replica:
+    image: postgres:16-alpine
+    container_name: swa-postgres-replica
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: events_db
+      PRIMARY_HOST: postgres-main
+      PGDATA: /var/lib/postgresql/data
+    entrypoint: ["/replica-entrypoint.sh"]
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_replica_data:/var/lib/postgresql/data
+      - ./.postgres/replica/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./.postgres/replica/docker-entrypoint.sh:/replica-entrypoint.sh
+    depends_on:
+      postgres-main:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d events_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - swa-network
+
+  # Auth PostgreSQL Database (Separate DB for Auth Service)
+  postgres-auth:
+    image: postgres:16-alpine
+    container_name: swa-postgres-auth
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: auth_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data
+      - ./.sql/init-auth.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d auth_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -56,13 +116,13 @@ services:
     environment:
       PORT: 3003
       JWT_SECRET: my-secret-key-change-in-production
-      DB_HOST: postgres
+      DB_HOST: postgres-auth
       DB_PORT: 5432
-      DB_NAME: events_db
+      DB_NAME: auth_db
       DB_USER: admin
       DB_PASSWORD: admin123
     depends_on:
-      postgres:
+      postgres-auth:
         condition: service_healthy
     networks:
       - swa-network
@@ -82,13 +142,13 @@ services:
     container_name: swa-command-service
     environment:
       PORT: 3002
-      DB_HOST: postgres
+      DB_HOST: postgres-main
       DB_PORT: 5432
       DB_NAME: events_db
       DB_USER: admin
       DB_PASSWORD: admin123
     depends_on:
-      postgres:
+      postgres-main:
         condition: service_healthy
     networks:
       - swa-network
@@ -108,13 +168,13 @@ services:
     container_name: swa-query-service
     environment:
       PORT: 3001
-      DB_HOST: postgres
+      DB_HOST: postgres-replica
       DB_PORT: 5432
       DB_NAME: events_db
       DB_USER: admin
       DB_PASSWORD: admin123
     depends_on:
-      postgres:
+      postgres-replica:
         condition: service_healthy
     networks:
       - swa-network
@@ -142,7 +202,9 @@ services:
     restart: unless-stopped
 
 volumes:
-  postgres_data:
+  postgres_main_data:
+  postgres_replica_data:
+  postgres_auth_data:
 
 networks:
   swa-network:

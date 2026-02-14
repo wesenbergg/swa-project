@@ -10,3 +10,9 @@ Image 2. Updated architecture to include UI.
 
 ![Milestone 3](milestone3.png)
 Image 3. Updated architecture to include API Gateway with authentication/authorization service.
+
+![Milestone 4](milestone4.png)
+Image 4. Updated auth service to use persistent storage for users and sessions.
+
+![Milestone 5](milestone5.png)
+Image 5. Updated architecture to use database per service pattern.
