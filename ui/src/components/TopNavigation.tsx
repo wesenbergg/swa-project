@@ -1,21 +1,18 @@
 import { useState } from "react"
-import { Search, LogOut } from "lucide-react"
-import { useNavigate } from "react-router"
+import { Search, User, LogIn } from "lucide-react"
+import { Link, useNavigate } from "react-router"
 
-const categories = ["All Events", "Social", "Academic", "Workshops"]
+const categories = ["All Events", "Sports"]
 
 const TopNavigation = () => {
   const [selectedCategory, setSelectedCategory] = useState("All Events")
   const navigate = useNavigate()
+  const isLoggedIn = !!localStorage.getItem("token")
 
-  const logout = () => {
-    localStorage.removeItem("token")
-    navigate("/login")
-  }
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white border-b-4 border-black px-4 py-6">
-        <div className="max-w-md mx-auto flex items-center justify-between">
+      <header className="max-w-md md:max-w-4xl lg:max-w-7xl mx-auto px-2 py-6">
+        <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <span className="text-xs font-black uppercase tracking-widest text-gray-500 mb-1">
               Student Org
@@ -28,18 +25,30 @@ const TopNavigation = () => {
             <button className="w-10 h-10 flex items-center justify-center bg-white neo-border neo-shadow neo-button-active">
               <Search className="w-5 h-5" strokeWidth={3} />
             </button>
-            <button
-              onClick={logout}
-              className="w-10 h-10 flex items-center justify-center bg-white neo-border neo-shadow neo-button-active"
-              title="Logout"
-            >
-              <LogOut className="w-5 h-5" strokeWidth={3} />
-            </button>
+
+            {isLoggedIn ? (
+              <Link
+                to="/profile"
+                className="w-10 h-10 flex items-center justify-center bg-white neo-border neo-shadow neo-button-active"
+                title="Profile"
+              >
+                <User className="w-5 h-5" strokeWidth={3} />
+              </Link>
+            ) : (
+              <button
+                onClick={() => navigate("/login")}
+                className="w-10 h-10 flex items-center justify-center bg-white neo-border neo-shadow neo-button-active"
+                title="Log In"
+              >
+                <LogIn className="w-5 h-5" strokeWidth={3} />
+              </button>
+            )}
           </div>
         </div>
-        <div className="max-w-md mx-auto flex gap-3 mt-6 overflow-x-auto no-scrollbar pb-2">
+        <div className="mx-auto flex gap-3 mt-6 overflow-x-auto no-scrollbar pb-2">
           {categories.map(category => (
-            <button
+            <Link
+              to="/"
               key={category}
               onClick={() => setSelectedCategory(category)}
               className={`px-4 py-1 neo-border neo-shadow text-xs font-black uppercase whitespace-nowrap ${
@@ -47,7 +56,7 @@ const TopNavigation = () => {
               }`}
             >
               {category}
-            </button>
+            </Link>
           ))}
         </div>
       </header>
