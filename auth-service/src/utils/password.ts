@@ -1,6 +1,6 @@
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt'
 
-const SALT_ROUNDS = 10;
+const SALT_ROUNDS = 10
 
 /**
  * Hash a password using bcrypt
@@ -8,7 +8,7 @@ const SALT_ROUNDS = 10;
  * @returns Promise resolving to hashed password
  */
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, SALT_ROUNDS);
+  return bcrypt.hash(password, SALT_ROUNDS)
 }
 
 /**
@@ -21,5 +21,5 @@ export async function verifyPassword(
   password: string,
   hash: string,
 ): Promise<boolean> {
-  return bcrypt.compare(password, hash);
+  return bcrypt.compare(password, hash)
 }

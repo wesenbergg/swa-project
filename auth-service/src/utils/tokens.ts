@@ -1,8 +1,8 @@
-import jwt from "jsonwebtoken";
-import crypto from "crypto";
+import jwt from 'jsonwebtoken'
+import crypto from 'crypto'
 
 const JWT_SECRET =
-  process.env.JWT_SECRET || "my-secret-key-change-in-production";
+  process.env.JWT_SECRET || 'my-secret-key-change-in-production'
 
 /**
  * Generate an access token for a user
@@ -19,15 +19,15 @@ export function generateAccessToken(
 ): string {
   return jwt.sign(
     {
-      iss: "default-key", // Required by Kong - must match consumer key
+      iss: 'default-key', // Required by Kong - must match consumer key
       sub: userId,
       username: username,
       role: role,
       exp: Math.floor(Date.now() / 1000) + 15 * 60, // 15 minutes
     },
     JWT_SECRET,
-    { algorithm: "HS256" },
-  );
+    { algorithm: 'HS256' },
+  )
 }
 
 /**
@@ -40,12 +40,12 @@ export function generateRefreshToken(userId: string): string {
   return jwt.sign(
     {
       sub: userId,
-      type: "refresh",
+      type: 'refresh',
       exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 7 days
     },
     JWT_SECRET,
-    { algorithm: "HS256" },
-  );
+    { algorithm: 'HS256' },
+  )
 }
 
 /**
@@ -58,17 +58,17 @@ export function verifyRefreshToken(
 ): { sub: string; type: string; exp: number } | null {
   try {
     const decoded = jwt.verify(token, JWT_SECRET, {
-      algorithms: ["HS256"],
-    }) as any;
+      algorithms: ['HS256'],
+    }) as any
 
     // Ensure it's a refresh token
-    if (decoded.type !== "refresh") {
-      return null;
+    if (decoded.type !== 'refresh') {
+      return null
     }
 
-    return decoded;
+    return decoded
   } catch (error) {
-    return null;
+    return null
   }
 }
 
@@ -79,7 +79,7 @@ export function verifyRefreshToken(
  * @returns SHA-256 hash of the token
  */
 export function hashToken(token: string): string {
-  return crypto.createHash("sha256").update(token).digest("hex");
+  return crypto.createHash('sha256').update(token).digest('hex')
 }
 
 /**
@@ -87,7 +87,7 @@ export function hashToken(token: string): string {
  * @returns Date object 7 days in the future
  */
 export function getRefreshTokenExpiry(): Date {
-  const date = new Date();
-  date.setDate(date.getDate() + 7);
-  return date;
+  const date = new Date()
+  date.setDate(date.getDate() + 7)
+  return date
 }
